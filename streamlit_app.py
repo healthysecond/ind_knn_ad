@@ -9,7 +9,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
 from PIL import Image
-from streamlit.report_thread import REPORT_CONTEXT_ATTR_NAME
+# from streamlit.report_thread import REPORT_CONTEXT_ATTR_NAME
+from streamlit.runtime.scriptrunner import get_script_run_ctx
+
 from torch.utils.data import DataLoader
 
 sys.path.append("./indad")
@@ -170,7 +172,7 @@ def main():
         else:
             col_imgs = st.session_state.sample_images
         for col, img in zip(cols, col_imgs):
-            col.image(img, use_column_width=True)
+            col.image(img, width=True)
 
         # LOAD MODEL
         # ----------
@@ -240,7 +242,7 @@ def st_redirect(src, dst, msg):
         old_write = src.write
 
         def new_write(b):
-            if getattr(current_thread(), REPORT_CONTEXT_ATTR_NAME, None):
+            if get_script_run_ctx():
                 buffer.write(b)
                 output_func(b)
             else:
